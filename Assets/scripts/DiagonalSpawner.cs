@@ -65,14 +65,26 @@ public class DiagonalMove : MonoBehaviour
     Vector2 dir;
     float speed;
 
+    Vector2 currentVelocity;
+    Vector2 velocityRef;
+
     public void Init(Vector2 direction, float moveSpeed)
     {
-        dir = direction;
+        dir = direction.normalized;
         speed = moveSpeed;
     }
 
     void Update()
     {
-        transform.Translate(dir * speed * Time.deltaTime);
+        Vector2 targetVelocity = dir * speed;
+
+        currentVelocity = Vector2.SmoothDamp(
+            currentVelocity,
+            targetVelocity,
+            ref velocityRef,
+            0.15f
+        );
+
+        transform.Translate(currentVelocity * Time.deltaTime);
     }
 }

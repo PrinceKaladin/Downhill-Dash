@@ -8,33 +8,32 @@ public class movement : MonoBehaviour
 {
     public float speed = 5f;      
     public float topY = 1f;      
-    public float bottomY = -1.5f;  
-
+    public float bottomY = -1.5f;
+    float currentSpeed = 0f;
+    float speedVelocity = 0f;
     void Update()
     {
-        float move = 0f;
-
+        float targetSpeed = 0f;
 
         if (Input.GetMouseButton(0))
         {
-            float tapX = Input.mousePosition.x;
-
-            if (tapX > Screen.width / 2f)
-                move = 1f;  
+            if (Input.mousePosition.x > Screen.width / 2f)
+                targetSpeed = 1f;
             else
-                move = -1f;  
+                targetSpeed = -1f;
         }
 
-        if (move != 0f)
-        {
-            Vector3 pos = transform.position;
-            pos.y += move * speed * Time.deltaTime;
+        currentSpeed = Mathf.SmoothDamp(
+            currentSpeed,
+            targetSpeed,
+            ref speedVelocity,
+            0.15f // чем меньше Ч тем резче
+        );
 
-
-            pos.y = Mathf.Clamp(pos.y, bottomY, topY);
-
-            transform.position = pos;
-        }
+        Vector3 pos = transform.position;
+        pos.y += currentSpeed * speed * Time.deltaTime;
+        pos.y = Mathf.Clamp(pos.y, bottomY, topY);
+        transform.position = pos;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
